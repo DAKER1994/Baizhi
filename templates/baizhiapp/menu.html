@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="{% static '/scripts/jquery/jquery-1.7.1.js' %}"></script>
+<link href="{% static '/style/authority/basic_layout.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static '/style/authority/common_style.css' %}" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="{% static '/scripts/authority/commonAll.js' %}"></script>
+<script type="text/javascript" src="{% static '/scripts/fancybox/jquery.fancybox-1.3.4.js' %}"></script>
+<script type="text/javascript" src="{% static '/scripts/fancybox/jquery.fancybox-1.3.4.pack.js' %}"></script>
+    <script type="text/javascript"  src="{% static 'jsencrypt.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static '/style/authority/jquery.fancybox-1.3.4.css' %}" media="screen"></link>
+<script type="text/javascript" src="{% static '/scripts/artDialog/artDialog.js?skin=default' %}"></script>
+<title>百智招聘</title>
+
+</head>
+<body>
+	<form id="submitForm" name="submitForm" action="" method="post">
+		<input type="hidden" name="allIDCheck" value="" id="allIDCheck"/>
+		<input type="hidden" name="fangyuanEntity.fyXqName" value="" id="fyXqName"/>
+		<div id="container">
+			<div class="ui_content">
+				<div class="ui_text_indent">
+					<div id="box_border">
+						<div id="box_top">搜索</div>
+						<div id="box_center">
+							<select name="fangyuanEntity.fyXqCode" id="fyXq" class="ui_select01" onchange="getFyDhListByFyXqCode();">
+                                <option value=""
+                                >--请选择--</option>
+                                <option value="">城市</option>
+                                <option value="">职位</option>
+                            </select>
+							<input type="text" id="fyZldz" name="fangyuanEntity.fyZldz" class="ui_input_txt02" />
+							<input type="button" value="查询" class="ui_input_btn01" onclick="search()" />
+                            <input type="hidden" value="{{ publickey }}" id="publickey">
+                            <input type="hidden" value="{{ city }}" id="city">
+                            <input type="hidden" value="{{ job }}" id="job">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="ui_content">
+				<div class="ui_tb">
+					<table class="table" cellspacing="0" cellpadding="0" width="100%" align="center" border="0">
+						<tr>
+							
+						
+							<th>姓名</th>
+							<th>性别</th>
+							<th>年龄</th>
+                            <th>工资</th>
+                            <th>学校</th>
+{#                            <th>专业</th>#}
+
+							<th>户籍地</th>
+{#							<th>现居住地</th>#}
+							<th>期望城市</th>
+                            <th>岗位</th>
+                            <th>增加</th>
+                            <th>删除</th>
+                            <th>修改</th>
+						</tr>
+                            {% for foo in page %}
+							<tr>
+								<td>{{ foo.employer_name }}</td>
+								<td>{{ foo.gender }}</td>
+								<td>{{ foo.age }}</td>
+                                <td>{{ foo.salary }}</td>
+                                <td>{{ foo.school }}</td>
+{#                                <td>{{ foo.profession }}</td>#}
+
+								<td>{{ foo.native_place }}</td>
+{#								<td>{{ foo.now_location }}</td>#}
+								<td>{{ foo.hope_location }}</td>
+                                <td>{{ foo.hope_position }}</td>
+							</tr>
+                        {% endfor %}
+		
+					</table>
+				</div>
+				<div class="ui_tb_h30">
+					<div class="ui_flt" style="height: 30px; line-height: 30px;">
+						共有
+						<span class="ui_txt_bold04">{{ employers.count }}</span>
+						条记录，当前第
+						<span class="ui_txt_bold04">{{ page.number }}</span>
+						页,共{{ page.paginator.num_pages }}页
+					</div>
+					<div class="ui_frt">
+						<!--    如果是第一页，则只显示下一页、尾页 -->
+						
+{#							<input type="button" value="首页" class="ui_input_btn01" />#}
+                        <a href="{% url 'baizhiapp:menu' %}?number=1&city={{ city }}&job={{ job }}">首页</a>
+                        {% if page.has_previous %}
+{#							<input  type="button" value="上一页" class="ui_input_btn01"  />#}
+                            <a href="{% url 'baizhiapp:menu' %}?number={{ page.previous_page_number }}&city={{ city }}&job={{ job }}">上一页</a>
+                        {% endif %}
+                        {% if page.has_next %}
+{#							<input type="button" value="下一页" class="ui_input_btn01"#}
+{#								onclick="jumpNormalPage(2);" />#}
+                            <a href="{% url 'baizhiapp:menu' %}?number={{ page.next_page_number }}&city={{ city }}&job={{ job }}" >下一页</a>
+                        {% endif %}
+{#							<input type="button" value="尾页" class="ui_input_btn01"#}
+{#								onclick="jumpNormalPage(9);" />#}
+                        <a href="{% url 'baizhiapp:menu' %}?number={{ page.paginator.num_pages }}&city={{ city }}&job={{ job }}">尾页</a>
+							<!--     如果是最后一页，则只显示首页、上一页 -->
+
+						转到第<input type="text" id="jumpNumTxt" class="ui_input_txt01"  oninput = "value=value.replace(/[^\d]/g,'')"/>页
+{#							 <input type="button" class="ui_input_btn01" value="跳转" onclick="jumpInputPage(9);" />#}
+                        <a href="javascript:void(0)" onclick="page_jump()">跳转</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+        <script>
+        function jiami(param) {
+            var encrypt =  new JSEncrypt();
+            var publickey = document.getElementById('publickey').value;
+            encrypt.setPublicKey(publickey)
+            return encrypt.encrypt(param)
+        }
+
+        function page_jump() {
+            var jumpNumTxt = document.getElementById("jumpNumTxt").value;
+            number = Number(jumpNumTxt)
+            if (number<= {{ page.paginator.num_pages }}) {
+                var city = document.getElementById("city").value;
+                var job = document.getElementById("job").value;
+                console.log(city,job,'传入的')
+                jumpNumTxt = jiami(jumpNumTxt);
+                city = jiami(city)
+                job = jiami(job)
+                console.log('加密后参数',city,'aaaaa',job)
+                location.href = '{% url 'baizhiapp:menu' %}?number='+jumpNumTxt+'&job='+job+'&city='+city;
+            }
+        }
+
+        function search() {
+            search_text = document.getElementById('fyZldz').value;
+            cj=jQuery('#fyXq option:selected').text();
+            {#alert(cj);#}
+            {#alert(search_text);#}
+            location.href = "{% url 'baizhiapp:mainc' %}?searchtext="+search_text+"&cj="+cj
+        }
+
+
+    </script>
+
+
+</body>
+</html>

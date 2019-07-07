@@ -1,0 +1,121 @@
+<!doctype html>
+{% load static %}
+<html>
+<head>
+<title>Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- font files  -->
+<link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+<!-- /font files  -->
+<!-- css files -->
+<link href="{% static '/css/style.css' %}" rel='stylesheet' type='text/css' media="all" />
+<!-- /css files -->
+ <script type="text/javascript" charset="utf-8" src="//g.alicdn.com/sd/ncpc/nc.js?t=2015052012"></script>
+    <script type="text/javascript" src="{% static 'jquery.1.8.3.min.js' %}"></script>
+</head>
+<body>
+<h1>Login</h1>
+<div class="log">
+	<div class="content1">
+		<h2>Login</h2>
+        <input id="code" type="hidden" value="900">
+		<form id="fm" method="post" action="{% url 'baizhiapp:login_logic' %}">
+            {% csrf_token %}
+
+			<input type="text" name="username" value="USERNAME" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'USERNAME';}">
+            <input type="password" name="password" value="PASSWORD" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'PASSWORD';}">
+             <div id="your-dom-id" class="nc-container" style="margin-left: 60px;margin-top: 20px"></div> <!--No-Captcha渲染的位置，其中 class 中必须包含 nc-container-->
+
+
+            <div class="button-row">
+                <input  class="sign-in" value="Sign In"  onclick="form_submit()">
+
+				<input type="reset" class="reset" value="Reset">
+
+				<div class="clear"></div>
+            </div>
+
+		</form>
+	</div>
+
+	<div class="clear"></div>
+</div>
+<div class="footer">
+	<p>Copyright &copy;  <a href="http://www.baizhiedu.com/" target="_blank" title="百知教育">百知教育</a></p>
+</div>
+
+    	<script type="text/javascript">
+        var nc_token = ["FFFF0N00000000007F75", (new Date()).getTime(), Math.random()].join(':');
+        var NC_Opt =
+        {
+            renderTo: "#your-dom-id",
+            appkey: "FFFF0N00000000007F75",
+            scene: "nc_login",
+            token: nc_token,
+            customWidth: 300,
+            trans:{"key1":"code0"},
+            elementID: ["usernameID"],
+            is_Opt: 0,
+            language: "cn",
+            isEnabled: true,
+            timeout: 3000,
+            times:5,
+            apimap: {
+                // 'analyze': '//a.com/nocaptcha/analyze.jsonp',
+                // 'get_captcha': '//b.com/get_captcha/ver3',
+                // 'get_captcha': '//pin3.aliyun.com/get_captcha/ver3'
+                // 'get_img': '//c.com/get_img',
+                // 'checkcode': '//d.com/captcha/checkcode.jsonp',
+                // 'umid_Url': '//e.com/security/umscript/3.2.1/um.js',
+                // 'uab_Url': '//aeu.alicdn.com/js/uac/909.js',
+                // 'umid_serUrl': 'https://g.com/service/um.json'
+            },
+             callback: function (data) {
+                window.console && console.log(nc_token)
+                window.console && console.log(data.csessionid)
+                window.console && console.log(data.sig)
+                url = "{% url 'baizhiapp:move_code' %}?nc_token="+nc_token+'&csessionid='+data.csessionid+'&sig='+data.sig
+                var xhr;
+                if(window.ActiveXObject){
+                    xhr = new ActiveXObject("Microsoft.XMLHTTP")
+                }else if(window.XMLHttpRequest){
+                    xhr = new XMLHttpRequest()
+                }
+                xhr.open("get",url,true);
+                xhr.send();
+                xhr.onreadystatechange=function()
+                {
+                if (xhr.readyState==4 && xhr.status==200)
+                {
+                var text = xhr.responseText;   //获得字符串形式的响应数据
+                    console.log(text,'qqqqq')
+                    document.getElementById('code').value = '100'
+    }
+}
+            }
+        }
+
+        var nc = new noCaptcha(NC_Opt)
+        nc.upLang('cn', {
+            _startTEXT: "请按住滑块，拖动到最右边",
+            _yesTEXT: "验证通过",
+            _error300: "哎呀，出错了，点击<a href=\"javascript:__nc.reset()\">刷新</a>再来一次",
+            _errorNetwork: "网络不给力，请<a href=\"javascript:__nc.reset()\">点击刷新</a>",
+        })
+
+
+            function form_submit() {
+                var code = document.getElementById('code').value;
+                if (code==='100'){
+                    $("form").submit()
+                }
+            }
+        </script>
+
+
+</body>
+</html>
