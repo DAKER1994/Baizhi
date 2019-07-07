@@ -192,46 +192,8 @@ def login_logic(request):
         request.session['username'] = username
         return redirect('baizhiapp:main')
     return redirect('baizhiapp:login')
+#
 
-
-# def searchMsg(request): #搜索
-#     city_list = ['beijing北京','shanghai上海','guangzhou广州','shenzhen深圳']
-#     job_list = ['pythonweb','python爬虫数据采集','bigdata大数据','ai人工智能']
-#     city_match = []   #城市匹配
-#     job_match = [] #职位匹配
-#     city_count = 0
-#     job_count = 0
-#     index = request.POST.get('index')
-#     msg = request.POST.get('msg')
-#     # print(index,msg,'0000000000000000')
-#     if index == '0':
-#         return HttpResponse('no')
-#     elif index == '1':    #按城市查找
-#         for city in city_list:     # 4个字符串
-#             for i in msg.lower():   # 遍历每一个信息
-#                 if i in city:
-#                     city_count += 1
-#             city_match.append(city_count)
-#             city_count = 0
-#     elif index == '2':
-#         for job in job_list:
-#             for j in msg.lower():
-#                 if j in job:
-#                     job_count += 1
-#             job_match.append(job_count)
-#             job_count = 0
-#     if city_match:    #按城市查询
-#         m = max(city_match)
-#         city_index = city_match.index(m)
-#         city = city_list[city_index][-2:]
-#         print('城市',city)
-#         msgs = TZpgg.objects.filter(hope_location=city).order_by('name')
-#         # print(type(msg[0:8],'1111111111111111111111'))
-#         paginator = Paginator(msg,per_page=8)
-#         max_number = paginator.num_pages    #总共多少页，要返回回去
-#         if max_number <2:
-#             msgs = msgs.values()
-#             resp = JsonResponse({'msgs':list(msgs)})
 
 
 from aliyunsdkcore import client
